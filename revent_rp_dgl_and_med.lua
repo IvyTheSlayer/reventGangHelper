@@ -51,12 +51,12 @@ function SE.onServerMessage(color, text)
 	elseif text:find(' Вы передали (.+)% (%d+)% аптечек.') then
 		_, medCount = text:match(' Вы передали (.+)% (%d+)% аптечек.')
 		medCount = settings.medpacks - medCount
-		print(medCount.." give")
+		--print(medCount.." give")
 		cmdSetMedpacks(medCount)
 	elseif text:find(' (.+)% передал Вам (%d+)% аптечек.') then
 		_, medCount = text:match(' (.+)% передал Вам (%d+)% аптечек.')
 		settings.medpacks = settings.medpacks + medCount
-		print(medCount.." take")
+		--print(medCount.." take")
 		cmdSetMedpacks(medCount)
 	end
 end
@@ -97,7 +97,7 @@ end
 
 function SE.onShowTextDraw(ID, data)
 	--inRPCtext = string.format("IN: RPC.SHOWTEXTDRAW\nID: %d; text: %s", ID, data.text)
-	print("textdraw ID = "..ID.." / modelID = "..data.modelId.." / data.color = "..data.color.." / letterColor = "..data.letterColor)
+	--print("textdraw ID = "..ID.." / modelID = "..data.modelId.." / data.color = "..data.color.." / letterColor = "..data.letterColor)
 	if data.modelId == 2358 and autoAmmo == true then
 		if ammoClick == false then
 			sampSendClickTextdraw(ID)
@@ -112,10 +112,10 @@ end
 -- sampTextdrawGetModelRotationZoomVehColor
 function showMedCount(m) 
 	settings.medpacks = m
-	print("medpacks set to "..m)
+	--print("medpacks set to "..m)
 	if settings.showmedpacks >= 1 then
 		customTexdraw(textID, string.format("~w~medpacks: %i", settings.medpacks), pos.pos_x, pos.pos_y, 3, 3, 1, 1, 0xFF000000, 0.5, 0xFF000000)
-		print("td showed in "..pos.pos_x.."/"..pos.pos_y)
+		--print("td showed in "..pos.pos_x.."/"..pos.pos_y)
 	end
 	return true
 end
@@ -130,7 +130,7 @@ function main()
 		sampRegisterChatCommand('showmed', cmdShowMedpacks)
 		sampRegisterChatCommand('medpos', cmdSetMedPos)
 		sampRegisterChatCommand('mpreset', cmdMedPosReset)
-		sampRegisterChatCommand("medhelp", function() sampShowDialog(0000, "{417ED6}Команды", "{ffffff}При первом заходе в игру после установки скрипта или при входе в другой аккаунт, откройте инвентарь, нажмите на аптечки и кликните по 'INFO'\n{C94D4D}Может не сработать с первого раза, но потом все должно быть ок\n {417ED6}/setmed{ffffff} - выставить значение аптек\n {417ED6}/showmed{ffffff} - показать/спрятать текстдрав с аптеками\n {417ED6}/medpos{ffffff} - переместить текстдрав с аптеками\n {417ED6}/mpreset{ffffff} - вернуть текстдрав с аптеками в дефолтное место\n {417ED6}/addammo{ffffff} - выставить значение сколько пт добавлять в пушку {C94D4D}(UNRELEASED)", "Похуй", "Абсолютно", 0) end)
+		sampRegisterChatCommand("medhelp", function() sampShowDialog(0000, "{417ED6}Команды", "{ffffff}При первом заходе в игру после установки скрипта или при входе в другой аккаунт, откройте инвентарь, нажмите на аптечки и кликните по 'INFO'\n{C94D4D}Может не сработать с первого раза, но потом все должно быть ок\n {417ED6}F9 - взять дигл и патроны для него\n {417ED6}/setmed{ffffff} - выставить значение аптек\n {417ED6}/showmed{ffffff} - показать/спрятать текстдрав с аптеками\n {417ED6}/medpos{ffffff} - переместить текстдрав с аптеками\n {417ED6}/mpreset{ffffff} - вернуть текстдрав с аптеками в дефолтное место\n {417ED6}/addammo{ffffff} - выставить значение сколько пт добавлять в пушку {C94D4D}(UNRELEASED)", "Похуй", "Абсолютно", 0) end)
 		-- устанавливаем количество аптек и/или показываем тд с их количеством	
 		showMedCount(settings.medpacks)
 		print("gun taker loaded")
@@ -168,7 +168,7 @@ function setTDPos(posX, posY)
 	inicfg.save(cfg, 'med_and_ammo')
 	print("ini saved")
 	sampTextdrawSetPos(textID, posX, posY)
-	print("td showed in "..posX.."/"..posY)
+	--print("td showed in "..posX.."/"..posY)
 end
 
 function onScriptTerminate(script, quitGame)
@@ -186,7 +186,7 @@ function cmdSetMedpacks(param)
 			sampTextdrawSetString(textID, string.format("~w~medpacks: %i", settings.medpacks))
 			inicfg.save(cfg, 'med_and_ammo')
 			print("ini saved")
-			print("update medpacks = " ..settings.medpacks)
+			--print("update medpacks = " ..settings.medpacks)
 		else
 			sampAddChatMessage('Ебани значение от 0 до 999999', 0x417ED6)
 		end
@@ -213,7 +213,7 @@ function cmdShowMedpacks()
 		settings.showmedpacks = 1
 		showMedCount(settings.medpacks)
 	end
-	print("showmedpacks = "..settings.showmedpacks)
+	--print("showmedpacks = "..settings.showmedpacks)
 end
 
 function cmdMedPosReset() 
@@ -230,7 +230,7 @@ function cmdSetAddableAmmo(param)
 	param = tonumber(param)
 	if param ~= nil then
 		if param > 0 and param <= 3000 then
-			print("ammo "..param)
+			--print("ammo "..param)
 			settings.ammouse = param
 			sampAddChatMessage('Теперь будет добавляться '..param..' пт. когда достанешься пушку', 0x417ED6)
 		else
