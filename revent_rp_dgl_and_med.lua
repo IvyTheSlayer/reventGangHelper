@@ -67,7 +67,7 @@ local medUseCheck = ""
 local endTime = 0
 -- для добавления пт
 local wepHk = {}
-local wepAmmo =  {}
+local wepAmmo = {}
 local autoAmmo = false
 local ammoClick = false
 local sendOnce = false
@@ -247,7 +247,6 @@ function main()
 				freezeCharPosition(PLAYER_PED, false)
 				if wepId ~= 7 then
 					sampShowDialog(hotkeysDialogId+wepId, "{EEAD5F}"..weaponNames[wepId], hotkeysAmmoText, "Выбрать", "Закрыть", 1)
-					wepId = 0
 				end
 			end
 		end
