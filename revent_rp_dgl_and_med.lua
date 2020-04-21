@@ -1,6 +1,6 @@
 script_name("get dgl + med use")
 script_version_number(1)
-script_description("num9 to dgl / num0 to med")
+script_description("/medhelp")
 script_author("ivy")
 
 require "lib.moonloader"
@@ -90,40 +90,28 @@ function SE.onServerMessage(color, text)
 	elseif text:find('Вы передали (.+)% (%d+)% аптечек.') and color == -65536 then
 		_, medCount = text:match('Вы передали (.+)% (%d+)% аптечек.')
 		settings.medpacks = settings.medpacks - medCount
-		--print(medCount.." give")
 		cmdSetMedpacks(settings.medpacks)
 	elseif text:find('(.+)% передал Вам (%d+)% аптечек.') and color == -65536 then
 		_, medCount = text:match('(.+)% передал Вам (%d+)% аптечек.')
 		settings.medpacks = settings.medpacks + medCount
-		--print(medCount.." take")
 		cmdSetMedpacks(settings.medpacks)
 	elseif text:find('Вы положили в общак: (%d+)% аптечек') and color == 869072640 then
 		medCount = text:match('Вы положили в общак: (%d+)% аптечек')
 		settings.medpacks = settings.medpacks - medCount
-		--print(medCount.." na sklad")
 		cmdSetMedpacks(settings.medpacks)
 	elseif text:find('Вы взяли с общака: (%d+)% аптечек') and color == 869072640 then
 		medCount = text:match('Вы взяли с общака: (%d+)% аптечек')
 		sampAddChatMessage(medCount, -1)
 		settings.medpacks = settings.medpacks + medCount
-		--print(medCount.." na sklad")
 		cmdSetMedpacks(settings.medpacks)
-	elseif text:find('Вы открыли подарочный бокс! Вам выпало: {ffffff}(%d+)% аптечек') and color = 328985855 then
-		medCount = text:match('(%d+)% аптечек')
+	elseif text:find('Вы открыли подарочный бокс! Вам выпало: {ffffff}(%d+)% аптечек') and color == 328985855 then
+		medCount = text:match('Вам выпало: {ffffff}(%d+)% аптечек')
 		settings.medpacks = settings.medpacks + medCount
 		cmdSetMedpacks(settings.medpacks)
 	end
 end
--- проверка в диалогах
--- 7999 диалог 24/7
--- 24350 добавление пт в дигл
--- onSendDialogResponse
--- dialogId = 7999 button = 1 listboxId = 1 input = 2. Аптечка
--- dialogId = 0
---if string.find(sampGetCurrentDialogEditboxText(), '{ffffff}Название:{FFFF00} Аптечка\n{ffffff}Описание:{7FB151} Ранен? Воспользуйся аптечкой.\n{ffffff}Количество: {139BEC}(%d+)% ед.\n') then
+
 function SE.onShowDialog(dialogId, style, title, button1, button2, text)
-	--sampAddChatMessage(dialogId, -1)
-	--sampAddChatMessage(style, -1)
 	if dialogId == 0 and title == "Инвентарь" then
 		if string.find(sampGetDialogText(), "Название:{FFFF00} Аптечка") then
 			settings.medpacks = text:match('Количество: {139BEC}(%d+)% ед.')
@@ -134,7 +122,6 @@ function SE.onShowDialog(dialogId, style, title, button1, button2, text)
 	if autoAmmo == true and dialogId == 24350 then
 		if sendOnce == false then
 			sampSendDialogResponse(dialogId, 1, -1, wepAmmo[weaponId])
-			--sampAddChatMessage("отправил диалог", -1)
 			weaponId = 0
 			autoAmmo = false
 			ammoClick = false
@@ -142,20 +129,12 @@ function SE.onShowDialog(dialogId, style, title, button1, button2, text)
 			ammoId = 0
 			isInvOpened = false
 			sampSendClickTextdraw(230)
-			--sampAddChatMessage("закрыл тд", -1)
 			return false
 		end
 	end
 end
 
-function SE.onSendDialogResponse(id, button, listboxId, input)
-    --sampAddChatMessage("id = "..id.." button = "..button.." listboxId = "..listboxId.." input = "..input, -1)
-	return true
-end
-
 function SE.onShowTextDraw(ID, data)
-	--inRPCtext = string.format("IN: RPC.SHOWTEXTDRAW\nID: %i; text: %s", ID, data.text)
-	--print("textdraw ID = "..ID.." / modelID = "..data.modelId.." / data.color = "..data.color.." / letterColor = "..data.letterColor)
 	if data.modelId == ammoId and autoAmmo == true then
 		if ammoClick == false then
 			sampSendClickTextdraw(ID)
@@ -272,10 +251,9 @@ function main()
 				end
 			end
 		end
-		local result, button, list, input = sampHasDialogRespond(hotkeysDialogId) -- Это ID диалога, которого мы создали
-		if result then--deagle, colt, ak47, m4, shot
-			if button == 1 then -- button == 1 - Левая кнопка. (Правая = 0). list == 0 - Первая строчка. (Строки начинаются с 0)
-				--sampShowDialog(hotkeysDialogId+1, "{EEAD5F}Desert Eagle", hotkeysText, "Выбрать", "Закрыть", 1)
+		local result, button, list, input = sampHasDialogRespond(hotkeysDialogId) 
+		if result then
+			if button == 1 then 
 				freezeCharPosition(PLAYER_PED, true)
 				sampAddChatMessage("Ебани нужный хоткей для "..weaponNames[list+1], 0xEEAD5F)
 				sampAddChatMessage("Или долбани пробел, чтобы убрать h0tK3y", 0xEEAD5F)
@@ -301,7 +279,6 @@ function showMedCount(m)
 	--print("medpacks set to "..m)
 	if settings.showmedpacks >= 1 then
 		customTexdraw(textID, string.format("~w~medkits: %i", settings.medpacks), pos.pos_x, pos.pos_y, 3, 3, 1, 1, 0xFF000000, 0.5, 0xFF000000)
-		--print("td showed in "..pos.pos_x.."/"..pos.pos_y)
 		activeTextdraw = true
 	end
 	return true
@@ -318,7 +295,6 @@ function setTDPos(posX, posY)
 	saveIni()
 	print("ini saved")
 	sampTextdrawSetPos(textID, posX, posY)
-	--print("td showed in "..posX.."/"..posY)
 end
 
 function saveIni()
@@ -353,7 +329,6 @@ function cmdSetMedpacks(param)
 			sampTextdrawSetString(textID, string.format("~w~medkits: %i", settings.medpacks))
 			saveIni()
 			print("ini saved")
-			--print("update medpacks = " ..settings.medpacks)
 		else
 			sampAddChatMessage('Ебани значение от 0 до 999999', 0x417ED6)
 		end
@@ -382,7 +357,6 @@ function cmdShowMedpacks()
 		showMedCount(settings.medpacks)
 		activeTextdraw = true
 	end
-	--print("showmedpacks = "..settings.showmedpacks)
 end
 
 function cmdMedPosReset() 
